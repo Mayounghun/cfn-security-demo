@@ -1,0 +1,61 @@
+name: Validate and Deploy CFN
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  validate:
+    name: Run CloudFormation Guard
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install CFN Guard
+        run: |
+          curl -L https://github.com/aws-cloudformation/cloudformation-guard/releases/latest/download/cfn-guard-linux-x86_64 \
+          -o cfn-guard
+          chmod +x cfn-guard
+          sudo mv cfn-guard /usr/local/bin/
+
+      - name: Validate templates
+        id: guard
+        run: |
+          set +e
+          cfn-guard validate --rules rules.guard --data template.yml > guard_output.txt
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: guard-log
+          path: guard_output.txt
+
+      - name: Fail if guard failed
+        if: steps.guard.outputs.exit_code != '0'
+        run: exit 1
+
+  deploy:
+    name: Deploy to AWS
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::528757786378:role/GitHubDeployRole
+          aws-region: ap-northeast-2
+
+      - name: Deploy CloudFormation Stack
+        run: |
+          aws cloudformation deploy \
+            --template-file template.yml \
+            --stack-name github-cfn-guard-demo \
+            --capabilities CAPABILITY_NAMED_IAM
