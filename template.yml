@@ -6,7 +6,8 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-06c39ed6b42908a36   # 서울 리전 Amazon Linux 2
-      InstanceType: t2.micro           # 규칙 위반하도록 일부러 설정
+      InstanceType: t3.micro           # 규칙 위반하도록 일부러 설정
       Tags:
         - Key: Owner
           Value: DevTeam
+
