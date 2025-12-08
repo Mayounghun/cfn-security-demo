@@ -6,10 +6,12 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-0ea4d4b8dc1e46212   
-      InstanceType: t3.micro           
+      InstanceType: t3.micro       
+      SubnetId: subnet-08b7b4fbceedb315d
       Tags:
         - Key: Owner
           Value: DevTeam
+
 
 
 
