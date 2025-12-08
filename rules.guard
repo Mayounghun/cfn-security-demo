@@ -1,7 +1,7 @@
-rule instance_type_restriction when type == "AWS::EC2::Instance" {
-    Properties.InstanceType in ["t3.micro", "t3.small"]
+rule check_instance_type {
+    Resources.*[ Type == "AWS::EC2::Instance" ].Properties.InstanceType == "t3.micro"
 }
 
-rule must_have_owner_tag when type == "AWS::EC2::Instance" {
-    Properties.Tags.*.Key contains ["Owner"]
+rule check_owner_tag {
+    Resources.*[ Type == "AWS::EC2::Instance" ].Properties.Tags.*[ Key == "Owner" ]
 }
