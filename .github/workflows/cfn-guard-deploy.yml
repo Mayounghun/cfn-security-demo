@@ -16,14 +16,15 @@ jobs:
 
       - name: Install CFN Guard
         run: |
-          curl -L -o cfn-guard \
-            https://github.com/aws-cloudformation/cloudformation-guard/releases/latest/download/cfn-guard-v2-linux-x86_64
-          chmod +x cfn-guard
-          sudo mv cfn-guard /usr/local/bin/cfn-guard
+          curl --proto '=https' --tlsv1.2 -sSf \
+            https://raw.githubusercontent.com/aws-cloudformation/cloudformation-guard/main/install-guard.sh \
+            | sh
+          echo "$HOME/.guard/bin" >> "$GITHUB_PATH"
 
       - name: Check Guard Version
         run: |
-          /usr/local/bin/cfn-guard --version
+          which cfn-guard
+          cfn-guard --version
     
       - name: Validate templates
         id: guard
