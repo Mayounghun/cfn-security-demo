@@ -2,9 +2,14 @@ rule check_instance_type {
     Resources.*[ Type == "AWS::EC2::Instance" ].Properties.InstanceType == "t3.micro"
 }
 
-rule must_have_owner_tag when
+rule validate_owner_tag when
   Type == "AWS::EC2::Instance" {
-    Properties.Tags[*].Key == "Owner"
+    Properties.Tags[*] {
+        Key == "Owner"
+        Value == "DevTeam"
+    }
 }
+
+
 
 
