@@ -5,10 +5,11 @@ Resources:
   DemoInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-06c39ed6b42908a36   
+      ImageId: ami-0ea4d4b8dc1e46212   
       InstanceType: t3.micro           
       Tags:
         - Key: Owner
           Value: DevTeam
+
 
 
